@@ -1,0 +1,138 @@
+1.传输层有哪些协议,各有什么特点?
+*TCP(Transmission Control Protocol)
+传输控制协议
+可靠的,面向连接的协议
+传输效率低
+*UDP(User Datagram Protocol)
+用户数据报协议
+不可靠的,无连接的服务
+传输效率高
+
+2.描述TCP三次握手以及四次断开的过程
+*三次握手
+syn--->syn,ack--->ack
+a.客户端发送SYN,请求建立连接
+b.服务端发送SYN,ACK
+c.客户端发送ACK
+*四次断开
+fin--->ack--->fin--->ack
+a.客户端发送FIN,请求断开连接
+b.服务端发送ACK
+c.服务端发送FIN,请求端卡连接
+d.客户端发送ACK
+
+3.SMTP,DNS,Telnet,TFTP,NTP分别是什么协议,使用了什么端口?
+解析:
+SMTP:简单邮件传输协议:25
+DNS:域名系统:53
+Telnet:远程登陆:23
+TFTP:简单文件传输协议:69
+NTP:网络时间协议:123
+
+4.ACL常见类型有哪些?各有什么区别?
+*标准ACL
+基于源IP地址过滤数据包
+标准访问控制列表的访问控制列表号是1~99
+*扩展ACL
+基于源IP地址,目的IP地址,指定协议,端口来过滤数据包
+扩展访问控制列表的访问控制列表号是100~199
+
+5.NAT的作用:通过将内部网络的私有IP地址翻译成全球唯一的公网IP地址,使内部网络可以连接到互联网等外部网络上
+
+6.私有IP地址分类:
+A类:10.0.0.0~10.255.255.255
+B类:172.16.0.0~172.31.255.255
+C类:192.168.0.0~192.168.255.255
+
+7.NAT实现方式:
+*静态转换(Static Translation)
+IP地址的对应关系是一对一,而且是不变的,借助静态转换,能实现外部网络对内部网络中某些特设定服务器的访问
+-配置步骤
+接口IP地址配置
+--设置外部接口的IP地址
+Router(config)#interface g0/1
+Router(config)#ip address 100.0.01 255.0.0.0
+Router(config)#no shutdown
+--建立静态地址转换
+Router(config)#ip nat inside source static 192.168.1.1 100.0.0.2
+--在内部和外部接口上启用NAT
+Router(config)#interface g0/1
+Router(config)#ip nat outside
+Router(config)#interface g0/0
+Router(config)#ip nat inside
+决定需要转换的主机地址
+决定采用什么公有地址
+在内部和外部接口上启用NAT
+*端口多路复用(Port Address Translation,PAT)
+通过改变外出数据包的源IP地址和源端口并进行端口转换,内部网络的所有主机均可共享一个合法IP地址实现互联网的访问,节约IP
+-配置步骤
+接口IP地址配置
+使用访问控制列表定义哪些内部主机能做PAT
+--定义内部IP地址
+Router(config)#access-list 1 permit 192.168.1.0 100.0.0.2
+确定路由器外部接口,在内部和外部接口上启用NAT
+--设置复用动态IP地址转换
+Router(config)#ip nat inside source list 1 interface g0/1 overload
+注:debug ip nat命令跟踪NAT操作
+
+补充:
+1.传输层的作用
+网络层提供点到点的连接(终端到终端)
+传输层提供端到端的连接(应用软件到应用软件)
+
+2.TCP的应用
+端口	协议		说明
+21	FTP		文件传输协议,用于上传,下载
+23	Telnet	用于远程登陆,通过连接目标计算机的这一端口,得到验证后可以远程控制管理目标计算机
+25	SMTP		简单邮件传输协议,用于发送邮件
+53	DNS		域名服务,当用户输入网站的名称后,由DNS负责将它解析成IP地址,这个过程中甬道的端口号是53
+80	HTTP		超文本传输协议,通过HTTP实现网络上超文本的传输
+
+3.UDP的应用
+端口	协议		说明
+69	TFTP		简单文件传输协议
+53	DNS		域名服务
+123	NTP		网络时间协议
+
+4.ACK访问控制列表的工作原理
+*访问控制列表在接口应用的方向
+出:已经过路由器的处理,正离开路由器接口的数据包
+入:已到达路由器接口的数据包,将被路由器处理
+
+5.标准访问控制列表的配置
+*创建ACL
+Router(config)#access-list access-list-number {permit | deny} source [ source-wildcard ]
+*隐含的拒绝语句
+Router(config)#access-list 1 deny 0.0.0.0 255.255.255.255
+*关键字
+host
+any
+*将ACL应用于接口
+Router(config)#ip access-group access-list-number{in | out}
+*在接口上取消ACL的应用
+Router(config)#ip access-group access-list-number{in | out}
+*查看访问控制列表
+Router(config)#show access-lists
+*删除ACL
+Router(config)#ip access-list access-list-number
+
+6.标准访问控制列表的配置
+*创建ACL
+Router(config)#access-list access-list-number {permit | deny} protocol { source source-wildcard destination destination-wildcard } [ operator operan ]
+*应用示例
+Router(config)#access-list 101 deny tcp 192.168.1.0 0.0.0.255 host 192.168.2.2 eq 80
+Router(config)#access-list 101 permit ip any any
+
+7.NAT的特性
+*NAT的优点
+节省公有合法IP地址
+处理地址重叠
+安全性
+*NAT的缺点
+延迟增大
+配置和维护的复杂性
+
+
+
+
+

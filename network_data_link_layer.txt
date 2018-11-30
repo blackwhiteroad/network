@@ -1,0 +1,94 @@
+1.以太网MAC地址长度是6个字节
+
+2.数据帧中数据部分的最大传输单元是1500个字节
+
+3.请描述交换机工作原理:
+a.学习,MAC地址表是交换机通过学习接收的数据帧的源MAC地址来形成的
+b.广播,如果目标地址在MAC地址表中没有,交换机就向除接收到该数据帧的接口外的其他所有接口广播该数据帧
+c.转发,交换机根据MAC地址表单转发数据帧
+d.更新,交换机MAC地址表的老化时间是300s,交换机如果范县一个帧的入接口和MAC地址的所在接口不同,交换机将MAC地址重新学习到新的接口
+
+4.VLAN的作用是什么?
+解析:
+广播控制,增加安全性,提高带宽利用,降低延迟
+
+5.TRUNK的作用是什么?
+解析:
+为数据帧打上VLAN标识,使不同VLAN数据可以用一条链路传递
+
+6.以太通道的作用是什么?
+解析:
+以太通道为交换机提供了接口捆绑的技术,允许两个交换机之间通过两个或多个接口并行连接,同时传输数据,以提供更高的带宽和可靠性
+
+7.以太网帧格式:
+目的地址(DA)-->源地址(SA)-->类型/长度-->数据	   -->   帧校验序列(CRC)
+6字节	       6字节	     2字节	 46~1500字节	         4字节
+
+8.交换机:
+*概念:交换机是用来连接局域网的主要设备,能够根据以太网帧中目标地址智能的转发数据
+*工作原理:
+
+9.静态VLAN的配置步骤
+a.创建VLAN
+-在全局配置模式下创建VLAN
+Switch(config)#vlan vlan-id	eg:vlan 1
+-删除已创建的VLAN
+Switch(config)#no vlan vlan-id
+b.将接口加入到相应的VLAN中
+Switch(config)#interface [range] fastEthernet 0/1[m-n]或in f 0/1[m-n]
+Switch(config-if[config-if-range])#switchport access vlan vlan-id
+//取消vlan
+Switch(config-if[config-if-range])#no switchport access vlan vlan-id
+c.验证
+Switch#show vlan brief
+
+10.VLAN标识的种类,以太网上实现中继可用的两种封装类型
+a.ISL(Cisco私有协议)
+b.IEEE802.1Q	***
+*IEEE802.1Q帧格式:
+终端设备<-------->交换机<-------------------------------------------->交换机<---------->终端设备
+	接入链路	中继链路(802.1Q标记,4字节)	   接入链路
+
+11.ISL和802.1Q的异同
+-相同点:都是显示标记,即帧被显示标记了VLAN的信息
+-不同点:
+a.IEEE802.1Q是公有的标记方式,ISL是Cisco私有的
+b.ISL采用外部标记的方法,802.1Q采用内部标记的方法
+c.ISL标记的长度为30字节,802.1Q标记的长度为4字节
+
+12.Trunk配置
+Switch(config)#interface [range] fastEthernet 0/1[m-n]或in [range]  f 0/1[m-n]
+Switch(config-if[config-if-range])#switchport mode trunk
+-恢复接口默认模式
+Switch(config)#interface [range] fastEthernet 0/1[m-n]或in [range]  f 0/1[m-n]
+Switch(config-if[config-if-range])#switchport mode dynamic auto
+或
+Switch(config-if[config-if-range])#no switchport mode trunk
+-查看接口模式
+Switch#show interface [range] fastEthernet 0/1[m-n]或in [range]  f 0/1[m-n] switchport
+
+13.以太通道
+-概述:也称为以太接口捆绑,接口聚集或以太链路聚集,英文名EtherChannel,以太通道为交换机提供了接口捆绑的技术,允许两个交换机之间通过两个或多个接口并行连接,同时传输数据,以提供更高的带宽和可靠性
+*配置以太网通道
+-多条线路负载均衡,宽带提高
+-容错,当一条线路失效时,其他线路通信,不会丢包
+*配置接口为以太通道模式
+//0/[m-n]要捆绑一起的接口
+Switch(config)#interface range fastEthernet 0/m-n或in range f 0/[m-n]
+//1:以太通道的组号
+Switch(config-if-range)#channel-group 1 mode on
+*查看以太通道的配置
+Switch#show etherchannel summary
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,137 @@
+1.网络层的功能有哪些?
+解析:
+a.定义了基于IP协议的逻辑地址
+b.连接不同的媒介类型
+c.选择数据通过网络的最佳路径
+
+2.ping工具与ICMP协议有关
+Ping [-t 永久连接] [-l 字节数] 目标IP或主机名
+常见的ping反馈结果
+-连接建立成功,Reply from 目标地址 .. ..
+-目标主机不可达,Destination host unreacable
+-请求时间超时,Request timed out
+*ICMP
+ICMP通过IP数据报传送,用来发送错误和控制信息
+ICMP定义了很多信息类型,例如:
+-目的地不可达
+-TTL超时
+-信息请求
+-信息应答
+-地址请求
+-地址应答
+*ICMP检测双向通路的连通性
+
+3.获取路由的默认方式有哪些?
+解析:
+a.静态路由
+b.默认路由
+c.动态路由
+
+4.请描述默认路由及其作用
+解析:
+a.默认路由是一种特殊的静态路由
+b.默认路由的目标网络为0.0.0.0 0.0.0.0,可匹配任何目标地址
+c.只有当从路由表中找不到任何明确匹配的路由条目时,才会使用默认路由,一般在企业网关出口使用
+
+5.分别描述思科三层交换机的接口配置IP地址以及配置中继链路的方法
+a.配置IP地址
+首先进入相关接口,使用no switchport命令转换为路由器接口,然后使用ip address命令配置ip地址
+b.配置中继链路
+进入相关接口后首先使用switchport trunk encapsulation dot1q命令为接口打上公有封装,然后使用switchport mode trunk命令改为中继模式
+
+6.路由器主要完成下列事情
+-识别数据包的目标IP地址
+-识别数据包的源IP地址(主要用于策略路由)
+-在路由表中发现可能的路径
+-选择路由表中到达目标最好的路径
+-维护和检查路由信息
+
+7.路由器怎么选择?
+*根据路由表怎么最佳路径
+-每个路由器都维护着一张路由表,这是路由器转发数据包的关键
+-每个路由表记录指明了:到达某个子网或主机应从路由器的哪个物理接口发送,通过此接口可到达该路径的下一个路由器的地址(或直接相连网络中的目标主机地址)
+
+8.如何获得路由表
+*静态,默认路由
+-由管理员在路由器上手工指定
+-适合分支机构,家居办公等小型网络
+*动态路由
+-根据网络拓扑或流量变化,由路由器通过路由协议自动设置
+-适合ISP服务商,广域网,园区网等大型网络
+
+9.静态路由
+*主要特点
+-由管理员手工设置,为单向条目
+-通信双方的边缘路由器都需要指定,否则回导致数据包有去无回
+
+10.配置静态路由
+*使用ip route命令
+-指定到达ip目的网络
+-基本格式:Router(config)#ip route 目标网络ID 子网掩码 下一跳
+
+11.三层交换技术
+使用三层交换技术实现VLAN间通信
+三层交换=二层交换+三层转发
+*虚接口概述
+在三层交换机上配置的VLAN接口为虚接口
+使用SVI(交换虚拟接口)实现VLAN间路由
+-虚接口的引入使得应用更加灵活
+Switch(config)#interface vlan vlan-id
+
+12.三层交换机的配置
+a.创建所需VLAN
+b.为每个VLAN配置IP地址
+c.启用SVI接口
+d.启用三层交换机的IP路由功能
+e.如果需要,配置三层交换机的动态或静态路由
+在三层交换机启用路由功能
+Switch(config)#ip routing
+配置虚接口的IP
+Switch(config)#interface vlan vlan-id
+Switch(config-if)#ip address ip_address netmask
+Switch(config-if)#no shutdown
+配置路由接口
+Switch(config-if)#no switchport
+在三层交换机上配置Trunk并指定接口封装为802.1q
+Switch(config)#interface fastEthernet 0/24
+Switch(config-if)#switchport trunk encapsulation dot1q
+Switch(config-if)#switchport mode trunk
+
+13.动态路由
+概述:基于某种路由协议实现
+特点:减少了管理任务,占用了网络带宽
+动态路由协议OSPF(开放式最短路径优先):适合中大型网络使用
+*OSPF区域
+为了适应大型的网络,OSPF在网络内部划分多个区域;每个OSPF路由器只维护所在区域的完整链路状态信息
+*区域ID
+区域ID可以表示成一个十进制的数字
+也可以表示成一个IP
+*骨干区域Area 0
+负责区域间路由信息传播
+*启动OSPF路由进程
+Router(config)#router ospf process-id
+*指定OSPF协议运行的接口和所在的区域
+Router(config-router)#network address inverse-maskarea area-id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
