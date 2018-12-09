@@ -1,0 +1,27 @@
+hostnamectl set-hostname bbs
+
+
+nmcli connection modify eth0 ipv4.method manual ipv4.addresses 192.168.4.100/24 connection.autoconnect yes
+nmcli connection up eth0
+
+/*
+#先添加网卡
+nmcli connection add con-name eth1 ifname eth1 type ethernet
+
+nmcli connection modify eth1 ipv4.method manual ipv4.addresses 192.168.2.100/24 connection.autoconnect yes
+
+nmcli connection up eth1
+ifup eth0 
+
+systemctl restart NetworkManager
+cat /etc/sysconfig/network-scripts/ifcfg-eth1
+*/
+
+vim /etc/yum.repos.d/bbs.repo
+
+[bbs]
+name=redhat
+baseurl=ftp://192.168.4.254/rhel7
+gpgcheck=0
+
+yum repolist
